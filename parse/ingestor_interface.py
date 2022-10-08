@@ -26,10 +26,20 @@ class txt_ingestor(ingestor_interface):
             return False
 
     def parse(self, path: str):
+        quotes = []
         with open(path, 'r') as f:
             for line in f:
                 if(len(line.strip())):
+                    body, author = line.replace('"','').split(" - ")
                     print(f"line is {line}")
+                    print(f"body is {body}")
+                    print(f"author is {author}")
+                    quotes.append((body, author.rstrip()))
+        print("END!!!")
+        for q in quotes:
+            print(f"q is {q}")
+        return quotes
+
 
 if __name__ == "__main__":
     _txt = txt_ingestor()
