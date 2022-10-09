@@ -61,11 +61,31 @@ class pdf_ingestor(ingestor_interface):
         call = subprocess.run(['pdftotext', path, new_file])
         super().parse(new_file, file_delim)
 
+class docx_ingestor(ingestor_interface):
+
+    def can_ingest(self, path: str):
+        file_type = subprocess.run(['file', path], stdout=subprocess.PIPE).stdout.decode('utf-8').split(': ')[1].rstrip()
+        print(f"the file_type {file_type}")
+
+        if(file_type == "Microsoft Word 2007+"):
+            return True
+        else:
+            return False
+
+    def parse(self, path: str):
+        file_delim = " - "
+        print(f"the path is {path}")
+        new_file = path.replace(".docx",".txt")
+        old_filename = path.split("/")[-1]
+        print(f"the filename is {old_filename}")
+        print(f"the new file is {new_file}")
+        call = subprocess.run(['docx2txt', path, new_file])
+        super().parse(new_file, file_delim)
 
 
 
 if __name__ == "__main__":
-    _pdf = pdf_ingestor()
-    _pdf.can_ingest("/home/kelbenj/Udacity/src/_data/DogQuotes/DogQuotesPDF.pdf")
-    if(_pdf):
-        _pdf.parse("/home/kelbenj/Udacity/src/_data/DogQuotes/DogQuotesPDF.pdf")
+    _docx = docx_ingestor()
+    _docx.can_ingest("/home/kelbenj/Udacity/src/_data/DogQuotes/DogQuotesDOCX.docx")
+    if(_docx):
+        _docx.parse("/home/kelbenj/Udacity/src/_data/DogQuotes/DogQuotesDOCX.docx")
