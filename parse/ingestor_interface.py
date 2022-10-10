@@ -15,9 +15,26 @@ class ingestor_interface(ABC):
         quotes = []
         print("In sup????")
 
-        with open(path, 'r') as f:
+        with open(path, 'r', encoding='utf-8-sig') as f:
             for line in f:
                 if(len(line.strip())):
+                    if(line.strip() == "body,author"):
+                        continue
+
+                    if(line[0] == "\""):
+                        body = re.search('\".*\"', line)
+                        print(f"HERE INSIDE THE LINE is {line}")
+                        #print(f"line {body.group(1)}")
+                        body_no_quotes = body.group(0).replace("\"","")
+                        print(f"new_str is {body_no_quotes}")
+                        author = line.split(file_delim)[-1].strip()
+                        print(f"f the author is {author}")
+                        quotes.append((body_no_quotes, author))
+                        continue
+
+
+
+
                     #body, author = line.replace('"','').split(" - ")
                     body, author = line.replace('"','').split(file_delim)
                     print(f"line is {line}")
@@ -40,7 +57,8 @@ class txt_ingestor(ingestor_interface):
         else:
             return False
 
-    def parse(self, path: str, file_delim: str):
+    def parse(self, path: str):
+        file_delim = " - "
         super().parse(path, file_delim)
 
 class pdf_ingestor(ingestor_interface):
@@ -101,22 +119,9 @@ class csv_ingestor(ingestor_interface):
 
     def parse(self, path: str):
         print("YEEEHAW")
+        file_delim = ","
+        super().parse(path, file_delim)
 
-        with open(path, 'r') as f:
-            for line in f:
-                if(len(line.strip())):
-                    #body, author = line.replace('"','').split(" - ")
-
-                    #print(re.split(‘; |, | \ * | \n’, my_st))
-                    print(f"line is {line}")
-                    if("\"" in line):
-                        body = re.search('\".*\"', line)
-                        #print(f"line {body.group(1)}")
-                        new_str = body.group(0).replace("\"","")
-                        print(f"new_str is {new_str}")
-                        new_lis = list(line.split(","))
-                        print(f"f the author is {new_lis[-1]}")
-        print("END!!!")
 
 
 
