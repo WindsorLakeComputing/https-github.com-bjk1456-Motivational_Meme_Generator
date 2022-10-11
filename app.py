@@ -1,7 +1,11 @@
 import random
 import os
+from ctypes import Union
+
 import requests
 from flask import Flask, render_template, abort, request
+from parse import ingestor_interface
+from parse import csv_ingestor, txt_ingestor, pdf_ingestor, docx_ingestor
 
 # @TODO Import your Ingestor and MemeEngine classes
 
@@ -20,8 +24,32 @@ def setup():
 
     # TODO: Use the Ingestor class to parse all files in the
     # quote_files variable
-    quotes = None
+    _csv = csv_ingestor()
+    _pdf = pdf_ingestor()
+    _txt = txt_ingestor()
+    _docx = docx_ingestor()
+    parsers = []
+    parsers.append(_csv)
+    parsers.append(_pdf)
+    parsers.append(_txt)
+    parsers.append(_docx)
+    quotes = []
+    quote_lines = []
+    #parsers = list[Union[csv_ingestor, pdf_ingestor, txt_ingestor, docx_ingestor]]
+    #ps = list[Union[csv_ingestor, pdf_ingestor, txt_ingestor, docx_ingestor]]
+    for f in quote_files:
+        print(f"f is {f}")
+        for p in parsers:
+            if(p.can_ingest(f)):
+                quote_lines.append(p.parse(f))
+                continue
+    for qs in quote_lines:
+        print(f"QQQQQ is {qs}")
+        for q in qs:
+            quotes.append(q)
 
+    for q in quotes:
+        print(f"the q is {q}")
     images_path = "./_data/photos/dog/"
 
     # TODO: Use the pythons standard library os class to find all
@@ -72,4 +100,6 @@ def meme_post():
 
 
 if __name__ == "__main__":
-    app.run()
+    #app.run()
+    setup()
+
