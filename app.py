@@ -4,15 +4,17 @@ from ctypes import Union
 
 import requests
 from flask import Flask, render_template, abort, request
-from parse import ingestor_interface
-from parse import csv_ingestor, txt_ingestor, pdf_ingestor, docx_ingestor
+
+from MemeGenerator.MemeEngine import MemeEngine
+from QuoteEngine import ingestor_interface
+from QuoteEngine import csv_ingestor, txt_ingestor, pdf_ingestor, docx_ingestor
 
 # @TODO Import your Ingestor and MemeEngine classes
 
 app = Flask(__name__)
 
-meme = MemeEngine('./static')
-
+#meme = MemeEngine('./static')
+meme = MemeEngine()
 
 def setup():
     """ Load all resources """
@@ -22,7 +24,7 @@ def setup():
                    './_data/DogQuotes/DogQuotesPDF.pdf',
                    './_data/DogQuotes/DogQuotesCSV.csv']
 
-    # TODO: Use the Ingestor class to parse all files in the
+    # TODO: Use the Ingestor class to QuoteEngine all files in the
     # quote_files variable
     _csv = csv_ingestor()
     _pdf = pdf_ingestor()
@@ -47,14 +49,17 @@ def setup():
         print(f"QQQQQ is {qs}")
         for q in qs:
             quotes.append(q)
-
-    for q in quotes:
-        print(f"the q is {q}")
+    imgs = []
     images_path = "./_data/photos/dog/"
+    with os.scandir(images_path) as it:
+        for entry in it:
+            if not entry.name.startswith('.') and entry.is_file():
+                imgs.append(entry.path)
 
     # TODO: Use the pythons standard library os class to find all
     # images within the images images_path directory
-    imgs = None
+    for i in imgs:
+        print(f"the i is {i}")
 
     return quotes, imgs
 
@@ -71,10 +76,14 @@ def meme_rand():
     # 1. select a random image from imgs array
     # 2. select a random quote from the quotes array
 
-    img = None
-    quote = None
-    path = meme.make_meme(img, quote.body, quote.author)
-    return render_template('meme.html', path=path)
+    img = random.choice(imgs)
+    quote = random.choice(quotes)
+    print(f"Inside meme_rand ... the quote is {quote[0]}")
+    print(f"Inside meme_rand ... the author is {quote[1]}")
+    print(f"Inside meme_rand ... the img is {img}")
+    path = meme.make_meme(img, quote[0], quote[1])
+    print(f"the path is {path}")
+    return render_template('meme.html', path="static/out.jpg")
 
 
 @app.route('/create', methods=['GET'])
@@ -100,6 +109,6 @@ def meme_post():
 
 
 if __name__ == "__main__":
-    #app.run()
-    setup()
+    app.run()
+    #setup()
 
