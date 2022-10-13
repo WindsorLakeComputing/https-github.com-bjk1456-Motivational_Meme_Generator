@@ -3,6 +3,9 @@ from PIL import Image, ImageDraw, ImageFont
 
 class MemeEngine():
 
+    def __init__(self, out_img_folder:str):
+        self.out_img_folder = out_img_folder
+
 
     #def generate_postcard(in_path, out_path, message=None, crop=None, width=None):
     def make_meme(self, img_path, text, author, width=500):
@@ -18,6 +21,8 @@ class MemeEngine():
         """
         img = Image.open(img_path)
         print(f"the size of the image is {img.size}")
+        print(f"THE TEXT IS {text}")
+        print(f"THE AUTHOR IS {author}")
 
         if(width <= 500):
             ratio = width / float(img.size[0])
@@ -29,40 +34,8 @@ class MemeEngine():
             draw = ImageDraw.Draw(img)
             font = ImageFont.truetype('./fonts/LilitaOne-Regular.ttf',
                                       size=20)
-            draw.text((10, 30), text, font=font, fill='white')
+            draw.text((10, 30), text, font=font, fill='yellow')
             draw.text((20, 60), author, font=font, fill='black')
 
-        img.save("./static/out.jpg")
-        return "./static/out.jpg"
-
-
-
-    def generate_postcard(in_path, out_path, message=None, crop=None, width=None):
-        """Create a Postcard With a Text Greeting
-
-        Arguments:
-            in_path {str} -- the file location for the input image.
-            out_path {str} -- the desired location for the output image.
-            crop {tuple} -- The crop rectangle, as a (left, upper, right, lower)-tuple. Default=None.
-            width {int} -- The pixel width value. Default=None.
-        Returns:
-            str -- the file path to the output image.
-        """
-        img = Image.open(in_path)
-
-        if crop is not None:
-            img = img.crop(crop)
-
-        if width is not None:
-            ratio = width / float(img.size[0])
-            height = int(ratio * float(img.size[1]))
-            img = img.resize((width, height), Image.NEAREST)
-
-        if message is not None:
-            draw = ImageDraw.Draw(img)
-            font = ImageFont.truetype('./fonts/LilitaOne-Regular.ttf',
-                                      size=20)
-            draw.text((10, 30), message, font=font, fill='white')
-
-        img.save(out_path)
-        return out_path
+        img.save(self.out_img_folder + "/out.jpg")
+        return self.out_img_folder + "/out.jpg"

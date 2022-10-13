@@ -6,15 +6,14 @@ import requests
 from flask import Flask, render_template, abort, request
 
 from MemeGenerator.MemeEngine import MemeEngine
-from QuoteEngine import ingestor_interface
 from QuoteEngine import csv_ingestor, txt_ingestor, pdf_ingestor, docx_ingestor
 
 # @TODO Import your Ingestor and MemeEngine classes
 
 app = Flask(__name__)
 
-#meme = MemeEngine('./static')
-meme = MemeEngine()
+meme = MemeEngine('./static')
+#meme = MemeEngine()
 
 def setup():
     """ Load all resources """
@@ -43,8 +42,10 @@ def setup():
         print(f"f is {f}")
         for p in parsers:
             if(p.can_ingest(f)):
+                print("SHHHHHHHHHHHHHHHHHHOUT")
                 quote_lines.append(p.parse(f))
                 continue
+    print(f"quote_lines are {quote_lines}")
     for qs in quote_lines:
         print(f"QQQQQ is {qs}")
         for q in qs:
@@ -103,7 +104,30 @@ def meme_post():
     #    file and the body and author form paramaters.
     # 3. Remove the temporary saved image.
 
-    path = None
+    image_url = request.form.get('image_url')
+    text = request.form.get('body')
+    author = request.form.get('author')
+
+    print(f"the image_url is {image_url}")
+    print(f"the text is {text}")
+    print(f"the author is {author}")
+
+    r = requests.get(image_url)
+    tmp = f'./tmp/{random.randint(0, 100000000)}.png'
+
+    with open(tmp, 'wb') as img:
+        img.write(r.content)
+
+    # This approach will also work:
+    # img = open(tmp, 'wb')
+    # img.write(r.content)
+    # img.close()
+
+    path = meme.make_meme(tmp, text, author)
+
+    print(tmp)
+
+    os.remove(tmp)
 
     return render_template('meme.html', path=path)
 
