@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 import subprocess
 import re
-#p = subprocess.run(['emoj', 'dog'], stdout=subprocess.PIPE)
-#emoji = p.stdout.decode('utf-8').split(' ')
-
+from docx import Document
+from pathlib import Path
 
 class ingestor_interface(ABC):
 
@@ -72,7 +71,18 @@ class docx_ingestor(ingestor_interface):
     def parse(self, path: str):
         file_delim = " - "
         new_file = path.replace(".docx",".txt")
-        call = subprocess.run(['docx2txt', path, new_file])
+        docx = Document(path)
+        txt_fle = Path(new_file)
+        txt_fle.touch(exist_ok=True)
+        docx_lines = []
+        for p in docx.paragraphs:
+            docx_lines.append(p.text)
+
+        with open(txt_fle, 'w+') as outfile:
+            for l in docx_lines:
+                outfile.write(l)
+                outfile.write('\n')
+
         return super().parse(new_file, file_delim)
 
 class csv_ingestor(ingestor_interface):
@@ -89,4 +99,3 @@ class csv_ingestor(ingestor_interface):
     def parse(self, path: str):
         file_delim = ","
         return super().parse(path, file_delim)
-
