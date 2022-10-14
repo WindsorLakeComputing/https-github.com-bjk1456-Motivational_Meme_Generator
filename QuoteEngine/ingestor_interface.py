@@ -72,6 +72,7 @@ class docx_ingestor(ingestor_interface):
     def parse(self, path: str):
         file_delim = " - "
         new_file = path.replace(".docx",".txt")
+        call = subprocess.run(['docx2txt', path, new_file])
         return super().parse(new_file, file_delim)
 
 class csv_ingestor(ingestor_interface):
@@ -86,7 +87,6 @@ class csv_ingestor(ingestor_interface):
             return False
 
     def parse(self, path: str):
-        print("YEEEHAW")
         file_delim = ","
         return super().parse(path, file_delim)
 
