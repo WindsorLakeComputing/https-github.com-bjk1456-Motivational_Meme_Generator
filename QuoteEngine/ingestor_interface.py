@@ -4,6 +4,7 @@ import re
 from docx import Document
 from pathlib import Path
 
+
 class ingestor_interface(ABC):
 
     @abstractmethod
@@ -20,11 +21,11 @@ class ingestor_interface(ABC):
 
                     if(line[0] == "\""):
                         body = re.search('\".*\"', line)
-                        body_no_quotes = body.group(0).replace("\"","")
+                        body_no_quotes = body.group(0).replace("\"", "")
                         author = line.split(file_delim)[-1].strip()
                         quotes.append((body_no_quotes, author))
                         continue
-                    body, author = line.replace('"','').split(file_delim)
+                    body, author = line.replace('"', '').split(file_delim)
                     quotes.append((body, author.rstrip()))
         return quotes
 
@@ -43,6 +44,7 @@ class txt_ingestor(ingestor_interface):
         file_delim = " - "
         return super().parse(path, file_delim)
 
+
 class pdf_ingestor(ingestor_interface):
 
     def can_ingest(self, path: str):
@@ -54,10 +56,11 @@ class pdf_ingestor(ingestor_interface):
 
     def parse(self, path: str):
         file_delim = " - "
-        new_file = path.replace(".pdf",".txt")
+        new_file = path.replace(".pdf", ".txt")
         old_filename = path.split("/")[-1]
         call = subprocess.run(['pdftotext', path, new_file])
         return super().parse(new_file, file_delim)
+
 
 class docx_ingestor(ingestor_interface):
 
@@ -70,7 +73,7 @@ class docx_ingestor(ingestor_interface):
 
     def parse(self, path: str):
         file_delim = " - "
-        new_file = path.replace(".docx",".txt")
+        new_file = path.replace(".docx", ".txt")
         docx = Document(path)
         txt_fle = Path(new_file)
         txt_fle.touch(exist_ok=True)
@@ -79,8 +82,8 @@ class docx_ingestor(ingestor_interface):
             docx_lines.append(p.text)
 
         with open(txt_fle, 'w+') as outfile:
-            for l in docx_lines:
-                outfile.write(l)
+            for line in docx_lines:
+                outfile.write(line)
                 outfile.write('\n')
 
         return super().parse(new_file, file_delim)

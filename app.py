@@ -3,6 +3,7 @@ import os
 
 import requests
 from flask import Flask, render_template, abort, request
+from flask_validator import ValidateURL
 
 from MemeGenerator.MemeEngine import MemeEngine
 from QuoteEngine import csv_ingestor, txt_ingestor, pdf_ingestor, docx_ingestor
@@ -12,6 +13,7 @@ from QuoteEngine import csv_ingestor, txt_ingestor, pdf_ingestor, docx_ingestor
 app = Flask(__name__)
 
 meme = MemeEngine('./static')
+
 
 def setup():
     """ Load all resources """
@@ -76,16 +78,20 @@ def meme_post():
     image_url = request.form.get('image_url')
     text = request.form.get('body')
     author = request.form.get('author')
-    r = requests.get(image_url)
-    tmp = f'./tmp/{random.randint(0, 100000000)}.png'
+    try:
+        img_data = requests.get(image_url)
+    except requests.exceptions.ConnectionError:
+        print("<Enter user friendly error message>")
+        return render_template('meme_error.html', url_for=img_data)
 
+    tmp = f'./tmp/{random.randint(0, 100000000)}.png'
     with open(tmp, 'wb') as img:
-        img.write(r.content)
+        img.write(img_data.content)
     path = meme.make_meme(tmp, text, author)
     os.remove(tmp)
 
     return render_template('meme.html', path=path)
 
+
 if __name__ == "__main__":
     app.run()
-
