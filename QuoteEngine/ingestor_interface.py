@@ -14,7 +14,8 @@ class ingestor_interface(ABC):
     def can_ingest(self, cls, path: str):
         """Determine if a file is able to have its contents parsed of quotes.
 
-        :param path: The path of the file to determine if it's contents are able to be extracted.
+        :param path: The path of the file to determine if
+                     its contents are extractable.
         """
         pass
 
@@ -48,9 +49,11 @@ class txt_ingestor(ingestor_interface):
     def can_ingest(self, path: str):
         """Determine if a file is able to have its contents parsed of quotes.
 
-        :param path: The path of the file to determine if it's contents are able to be extracted.
+        :param path: The path of the file to determine if
+                     its contents are extractable.
         """
-        p = subprocess.run(['file', path], stdout=subprocess.PIPE).stdout.decode('utf-8').split(' ')
+        p = subprocess.run(['file', path], stdout=subprocess.PIPE).stdout\
+            .decode('utf-8').split(' ')
         last_2_words = ' '.join(p[len(p)-2:])
         if(last_2_words == ("ASCII text")):
             return True
@@ -72,9 +75,11 @@ class pdf_ingestor(ingestor_interface):
     def can_ingest(self, path: str):
         """Determine if a file is able to have its contents parsed of quotes.
 
-        :param path: The path of the file to determine if it's contents are able to be extracted.
+        :param path: The path of the file to determine if its
+                     contents are extractable.
         """
-        file_type = subprocess.run(['file', path], stdout=subprocess.PIPE).stdout.decode('utf-8').split(' ')[1]
+        file_type = subprocess.run(['file', path], stdout=subprocess.PIPE)\
+            .stdout.decode('utf-8').split(' ')[1]
         if(file_type == "PDF"):
             return True
         else:
@@ -98,9 +103,11 @@ class docx_ingestor(ingestor_interface):
     def can_ingest(self, path: str):
         """Determine if a file is able to have its contents parsed of quotes.
 
-        :param path: The path of the file to determine if it's contents are able to be extracted.
+        :param path: The path of the file to determine if its
+                     contents are extractable.
         """
-        file_type = subprocess.run(['file', path], stdout=subprocess.PIPE).stdout.decode('utf-8').split(': ')[1].rstrip()
+        file_type = subprocess.run(['file', path], stdout=subprocess.PIPE)\
+            .stdout.decode('utf-8').split(': ')[1].rstrip()
         if(file_type == "Microsoft Word 2007+"):
             return True
         else:
@@ -127,17 +134,20 @@ class docx_ingestor(ingestor_interface):
 
         return super().parse(new_file, file_delim)
 
+
 class csv_ingestor(ingestor_interface):
     """Parse quotes from a csv file."""
 
     def can_ingest(self, path: str):
         """Determine if a file is able to have its contents parsed of quotes.
 
-        :param path: The path of the file to determine if it's contents are able to be extracted.
+        :param path: The path of the file to determine if its
+                     contents are extractable.
         """
         filename = path.split("/")[-1]
         file_suffix = filename[-3:].rstrip()
-        file_type = subprocess.run(['file', path], stdout=subprocess.PIPE).stdout.decode('utf-8').split(': ')[1].rstrip()
+        file_type = subprocess.run(['file', path], stdout=subprocess.PIPE)\
+            .stdout.decode('utf-8').split(': ')[1].rstrip()
         if((file_suffix == "csv") and ("ASCII text" in file_type)):
             return True
         else:

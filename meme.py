@@ -1,4 +1,4 @@
-"""Create a meme via the CLI"""
+"""Create a meme via the CLI."""
 import os
 import random
 import argparse
@@ -7,7 +7,6 @@ import pathlib
 from MemeGenerator.MemeEngine import MemeEngine
 from QuoteEngine import csv_ingestor, pdf_ingestor, txt_ingestor, docx_ingestor
 from QuoteModel import QuoteModel
-
 
 
 def generate_meme(path=None, body=None, author=None):
@@ -58,7 +57,7 @@ def generate_meme(path=None, body=None, author=None):
             raise Exception('Author Required if Body is Used')
         quote = QuoteModel(body, author)
 
-    meme = MemeEngine('./tmp')
+    meme = MemeEngine('./static')
     path = meme.make_meme(img, quote.body, quote.author)
     return path
 
@@ -71,12 +70,12 @@ if __name__ == "__main__":
         description="A simple cli app for Motivational Meme Generator"
     )
 
-    parser.add_argument('--path', default=("./_data/photos/dog/xander_4.jpg"),
+    parser.add_argument('--path',
                         type=pathlib.Path,
                         help="An image path")
-    parser.add_argument('--body', default=("Don't bark too loudly."),
+    parser.add_argument('--body',
                         help="A string quote body.")
-    parser.add_argument('--author', default=("A. Barker"),
+    parser.add_argument('--author',
                         help="A string quote author.")
 
     args = parser.parse_args()

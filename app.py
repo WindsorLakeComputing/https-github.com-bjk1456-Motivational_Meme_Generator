@@ -60,7 +60,7 @@ def meme_rand():
     img = random.choice(imgs)
     quote = random.choice(quotes)
     path = meme.make_meme(img, quote[0], quote[1])
-    return render_template('meme.html', path="static/out.jpg")
+    return render_template('meme.html', path=path)
 
 
 @app.route('/create', methods=['GET'])
