@@ -1,3 +1,5 @@
+"""Parse quotes from various file types."""
+
 from abc import ABC, abstractmethod
 import subprocess
 import re
@@ -6,12 +8,22 @@ from pathlib import Path
 
 
 class ingestor_interface(ABC):
+    """Open various files, extract the quotes, and return them in a list."""
 
     @abstractmethod
     def can_ingest(self, cls, path: str):
+        """Determine if a file is able to have its contents parsed of quotes.
+
+        :param path: The path of the file to determine if it's contents are able to be extracted.
+        """
         pass
 
     def parse(self, path: str, file_delim: str):
+        """Extract the quotes from the file.
+
+        :param path: The path of the file to extract its quotes from.
+        :param file_delim: The delimiter to separate the quote from its author.
+        """
         quotes = []
         with open(path, 'r', encoding='utf-8-sig') as f:
             for line in f:
@@ -31,8 +43,13 @@ class ingestor_interface(ABC):
 
 
 class txt_ingestor(ingestor_interface):
+    """Parse quotes from a txt file."""
 
     def can_ingest(self, path: str):
+        """Determine if a file is able to have its contents parsed of quotes.
+
+        :param path: The path of the file to determine if it's contents are able to be extracted.
+        """
         p = subprocess.run(['file', path], stdout=subprocess.PIPE).stdout.decode('utf-8').split(' ')
         last_2_words = ' '.join(p[len(p)-2:])
         if(last_2_words == ("ASCII text")):
@@ -41,13 +58,22 @@ class txt_ingestor(ingestor_interface):
             return False
 
     def parse(self, path: str):
+        """Extract the quotes from the file.
+
+        :param path: The path of the file to extract its quotes from.
+        """
         file_delim = " - "
         return super().parse(path, file_delim)
 
 
 class pdf_ingestor(ingestor_interface):
+    """Parse quotes from a pdf file."""
 
     def can_ingest(self, path: str):
+        """Determine if a file is able to have its contents parsed of quotes.
+
+        :param path: The path of the file to determine if it's contents are able to be extracted.
+        """
         file_type = subprocess.run(['file', path], stdout=subprocess.PIPE).stdout.decode('utf-8').split(' ')[1]
         if(file_type == "PDF"):
             return True
@@ -55,6 +81,10 @@ class pdf_ingestor(ingestor_interface):
             return False
 
     def parse(self, path: str):
+        """Extract the quotes from the file.
+
+        :param path: The path of the file to extract its quotes from.
+        """
         file_delim = " - "
         new_file = path.replace(".pdf", ".txt")
         old_filename = path.split("/")[-1]
@@ -63,8 +93,13 @@ class pdf_ingestor(ingestor_interface):
 
 
 class docx_ingestor(ingestor_interface):
+    """Parse quotes from a docx file."""
 
     def can_ingest(self, path: str):
+        """Determine if a file is able to have its contents parsed of quotes.
+
+        :param path: The path of the file to determine if it's contents are able to be extracted.
+        """
         file_type = subprocess.run(['file', path], stdout=subprocess.PIPE).stdout.decode('utf-8').split(': ')[1].rstrip()
         if(file_type == "Microsoft Word 2007+"):
             return True
@@ -72,6 +107,10 @@ class docx_ingestor(ingestor_interface):
             return False
 
     def parse(self, path: str):
+        """Extract the quotes from the file.
+
+        :param path: The path of the file to extract its quotes from.
+        """
         file_delim = " - "
         new_file = path.replace(".docx", ".txt")
         docx = Document(path)
@@ -89,8 +128,13 @@ class docx_ingestor(ingestor_interface):
         return super().parse(new_file, file_delim)
 
 class csv_ingestor(ingestor_interface):
+    """Parse quotes from a csv file."""
 
     def can_ingest(self, path: str):
+        """Determine if a file is able to have its contents parsed of quotes.
+
+        :param path: The path of the file to determine if it's contents are able to be extracted.
+        """
         filename = path.split("/")[-1]
         file_suffix = filename[-3:].rstrip()
         file_type = subprocess.run(['file', path], stdout=subprocess.PIPE).stdout.decode('utf-8').split(': ')[1].rstrip()
@@ -100,5 +144,9 @@ class csv_ingestor(ingestor_interface):
             return False
 
     def parse(self, path: str):
+        """Extract the quotes from the file.
+
+        :param path: The path of the file to extract its quotes from.
+        """
         file_delim = ","
         return super().parse(path, file_delim)

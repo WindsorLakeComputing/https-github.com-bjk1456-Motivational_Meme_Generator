@@ -1,3 +1,4 @@
+"""Create a meme via the CLI"""
 import os
 import random
 import argparse
@@ -8,11 +9,9 @@ from QuoteEngine import csv_ingestor, pdf_ingestor, txt_ingestor, docx_ingestor
 from QuoteModel import QuoteModel
 
 
-# @TODO Import your Ingestor and MemeEngine classes
-
 
 def generate_meme(path=None, body=None, author=None):
-    """ Generate a meme given an path and a quote """
+    """Generate a meme given an path and a quote."""
     print(f"the path is {path}")
     img = None
     quote = None

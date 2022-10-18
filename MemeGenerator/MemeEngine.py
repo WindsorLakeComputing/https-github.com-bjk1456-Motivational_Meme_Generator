@@ -1,15 +1,19 @@
+"""Create a Meme that contains: an image, a quote, and an author."""
+
 from PIL import Image, ImageDraw, ImageFont
 from random import randint, random
 import textwrap
 
 
 class MemeEngine():
+    """Create a Meme."""
 
     def __init__(self, out_img_folder: str):
+        """:param out_img_folder: The directory to store the created memes."""
         self.out_img_folder = out_img_folder
 
     def make_meme(self, img_path, text, author, width=500):
-        """Create a Meme With a quote
+        """Create a Meme With a quote.
 
         Arguments:
             in_path {str} -- the file location for the input image.
@@ -34,14 +38,29 @@ class MemeEngine():
         return self.out_img_folder + "/{randint(0, 100000000)}.jpg"
 
     def read(selfself, img_path):
+        """Open the file of the image that will be modified with the quote.
+
+        :param img_path: The path to the file that will be modified.
+        """
         return Image.open(img_path)
 
     def resize_img(self, img, width):
+        """Change the dimensions of the image.
+
+        :param img: The image that will be modified.
+        :width: The new width of the image
+        """
         ratio = width / float(img.size[0])
         height = int(ratio * float(img.size[1]))
         return img.resize((width, height), Image.NEAREST)
 
     def draw(self, img, text, author):
+        """Draw the new meme.
+
+        :param img: The image that will be modified.
+        :text: The quote to be painted on the image.
+        :author: THe author of the quote.
+        """
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype('./fonts/LilitaOne-Regular.ttf',
                                   size=20)
