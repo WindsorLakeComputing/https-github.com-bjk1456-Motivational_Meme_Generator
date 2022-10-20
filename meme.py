@@ -9,7 +9,7 @@ from QuoteEngine import csv_ingestor, pdf_ingestor, txt_ingestor, docx_ingestor
 from QuoteModel import QuoteModel
 
 
-def generate_meme(path=None, body=None, author=None):
+def generate_meme(path, body, author):
     """Generate a meme given an path and a quote."""
     print(f"the path is {path}")
     img = None
@@ -70,12 +70,12 @@ if __name__ == "__main__":
         description="A simple cli app for Motivational Meme Generator"
     )
 
-    parser.add_argument('--path',
+    parser.add_argument('--path', default="_data/photos/dog/xander_4.jpg",
                         type=pathlib.Path,
                         help="An image path")
-    parser.add_argument('--body',
+    parser.add_argument('--body', default="To be or not to be",
                         help="A string quote body.")
-    parser.add_argument('--author',
+    parser.add_argument('--author', default="",
                         help="A string quote author.")
 
     args = parser.parse_args()

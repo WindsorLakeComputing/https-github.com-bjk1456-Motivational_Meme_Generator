@@ -24,7 +24,6 @@ class MemeEngine():
             str -- the file path to the output image.
         """
         img = self.read(in_path)
-        print(f"img.size IZ {img.size}")
 
         if(width <= 500):
             img = self.resize_img(img, width)
@@ -64,7 +63,7 @@ class MemeEngine():
         font = ImageFont.truetype('./fonts/LilitaOne-Regular.ttf',
                                   size=20)
         h, w = img.size
-        four_fifths = w * .8
+        four_fifths = int(w * .8)
         one_fifth = w * .20
         rand_x = randint(1, four_fifths)
         if((len(text) * 6) > one_fifth):

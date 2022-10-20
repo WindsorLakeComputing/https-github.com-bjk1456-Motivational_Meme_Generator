@@ -77,11 +77,18 @@ def meme_post():
     author = request.form.get('author')
     try:
         img_data = requests.get(image_url)
-    except requests.exceptions.ConnectionError:
-        print("<Enter user friendly error message>")
-        return render_template('meme_error.html', url_for=img_data)
+        if img_data.status_code != 200:
+            raise requests.ConnectionError("Expected status code 200,"
+                                           " but got {}"
+                                           .format(img_data.status_code))
+        print(f"fimg_data == {img_data}")
+    except requests.exceptions.ConnectionError as e:
+        print(f"{e}<Enter user friendly error message>")
+        return render_template('meme_error.html', url_for=image_url)
+    except requests.exceptions.MissingSchema as e:
+        return render_template('meme_error.html', url_for=image_url)
 
-    tmp = f'./tmp/{random.randint(0, 100000000)}.png'
+    tmp = f'./tmp/{random.randint(0, 100000000)}.jpg'
     with open(tmp, 'wb') as img:
         img.write(img_data.content)
     path = meme.make_meme(tmp, text, author)
