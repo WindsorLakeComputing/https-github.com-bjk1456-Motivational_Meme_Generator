@@ -63,15 +63,15 @@ class MemeEngine():
         font = ImageFont.truetype('./fonts/LilitaOne-Regular.ttf',
                                   size=20)
         h, w = img.size
-        four_fifths = int(w * .8)
+        two_fifths = int(w * .4)
         one_fifth = w * .20
-        rand_x = randint(1, four_fifths)
+        rand_x = randint(1, two_fifths)
         if((len(text) * 6) > one_fifth):
-            wrap_amount = one_fifth / 6
+            wrap_amount = one_fifth / 2
             text = textwrap.fill(text=text, width=wrap_amount)
             draw.text((rand_x + 10, rand_x + 80), author, font=font,
                       fill='black')
         else:
             draw.text((rand_x + 10, rand_x + 40), author, font=font,
                       fill='black')
-        draw.text((rand_x, rand_x + 20), text, font=font, fill='yellow')
+        draw.text((rand_x, rand_x + 15), text, font=font, fill='yellow')

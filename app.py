@@ -81,7 +81,6 @@ def meme_post():
             raise requests.ConnectionError("Expected status code 200,"
                                            " but got {}"
                                            .format(img_data.status_code))
-        print(f"fimg_data == {img_data}")
     except requests.exceptions.ConnectionError as e:
         print(f"{e}<Enter user friendly error message>")
         return render_template('meme_error.html', url_for=image_url)
